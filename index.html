@@ -2,156 +2,216 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Tareas</title>
+    <title>Lista de Tareas Interactiva</title>
     <style>
+        /* Animaciones y estilos */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 915px;
+            max-width: 900px;
+            max-height: 900px;
             margin: 0 auto;
-            background: #144e59;
             padding: 20px;
-            border-radius: 50px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            background-color: #f4f4f4;
         }
 
-        h1 {
-            text-align: center;
-            color: #ffff;
+        .task-container {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            padding: 20px;
+            animation: fadeIn 0.5s ease;
         }
 
-        .task-form {
+        .task-input {
             display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
-        .task-form input {
-            flex: 1;
+        .task-input input {
+            flex-grow: 1;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            margin-right: 10px;
         }
 
-        .task-form button {
-            padding: 10px 20px;
-            background-color: #28a745;
-            color: #fff;
+        .task-input button {
+            margin-left: 10px;
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            transition: background-color 0.3s;
         }
 
-        .task-form button:hover {
-            background-color: #218838;
+        .task-input button:hover {
+            background-color: #45a049;
+        }
+
+        .error-message {
+            color: red;
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease;
         }
 
         .task-list {
-            list-style: none;
+            list-style-type: none;
             padding: 0;
         }
 
         .task-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
             padding: 10px;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #eee;
+            animation: slideIn 0.5s ease;
         }
 
-        .task-item:last-child {
-            border-bottom: none;
+        .task-item input[type="checkbox"] {
+            margin-right: 10px;
         }
 
-        .task-item.completed {
+        .task-item .task-text {
+            flex-grow: 1;
+        }
+
+        .task-item.completed .task-text {
             text-decoration: line-through;
             color: #888;
         }
 
-        .task-actions button {
-            margin-left: 10px;
-            padding: 5px 10px;
+        .task-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .task-buttons button {
+            background-color: transparent;
             border: none;
-            border-radius: 4px;
             cursor: pointer;
+            transition: color 0.3s;
         }
 
-        .task-actions .edit {
-            background-color: #c59916;
-            color: #000;
-        }
+        .edit-btn { color: #2196F3; }
+        .delete-btn { color: #f44336; }
 
-        .task-actions .delete {
-            background-color: #dc3545;
-            color: #fff;
-        }
-
-        .task-actions .check {
-            background-color: #007bff;
-            color: #fff;
-        }
-
-        .task-stats {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .task-stats span {
-            margin: 0 10px;
-            font-weight: bold;
+        .task-counters {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f1f1f1;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <h1>Lista de Tareas</h1>
-
-        <div class="task-form">
-            <input type="text" placeholder="Nueva tarea">
-            <button>Agregar</button>
+    <div class="task-container">
+        <div class="task-input">
+            <input type="text" id="taskInput" placeholder="Agregar nueva tarea">
+            <button onclick="agregarTarea()">Agregar</button>
         </div>
-
-        <ul class="task-list">
-            <li class="task-item">
-                <span>Tarea 1</span>
-                <div class="task-actions">
-                    <button class="check">✓</button>
-                    <button class="edit">Editar</button>
-                    <button class="delete">Eliminar</button>
-                </div>
-            </li>
-            <li class="task-item completed">
-                <span>Tarea 2</span>
-                <div class="task-actions">
-                    <button class="check">✓</button>
-                    <button class="edit">Editar</button>
-                    <button class="delete">Eliminar</button>
-                </div>
-            </li>
-            <li class="task-item">
-                <span>Tarea 3</span>
-                <div class="task-actions">
-                    <button class="check">✓</button>
-                    <button class="edit">Editar</button>
-                    <button class="delete">Eliminar</button>
-                </div>
-            </li>
-        </ul>
-
-        <div class="task-stats">
-            <span>Total: 3</span>
-            <span>Completadas: 1</span>
-            <span>Incompletas: 2</span>
+        
+        <div id="errorMessage" class="error-message"></div>
+        
+        <ul id="taskList" class="task-list"></ul>
+        
+        <div class="task-counters">
+            <span>Total de tareas: <span id="totalTareas">0</span></span>
+            <span>Completadas: <span id="tareasCompletadas">0</span></span>
+            <span>Pendientes: <span id="tareasPendientes">0</span></span>
         </div>
     </div>
 
+    <script>
+        let tareas = [];
+
+        function agregarTarea() {
+            const input = document.getElementById('taskInput');
+            const errorMessage = document.getElementById('errorMessage');
+
+            if (input.value.trim() === '') {
+                errorMessage.textContent = 'Por favor, ingrese una tarea';
+                return;
+            }
+
+            errorMessage.textContent = '';
+
+            const nuevaTarea = {
+                id: Date.now(),
+                texto: input.value,
+                completada: false
+            };
+
+            tareas.push(nuevaTarea);
+            renderizarTareas();
+            input.value = '';
+        }
+
+        function renderizarTareas() {
+            const lista = document.getElementById('taskList');
+            const totalTareas = document.getElementById('totalTareas');
+            const tareasCompletadas = document.getElementById('tareasCompletadas');
+            const tareasPendientes = document.getElementById('tareasPendientes');
+
+            lista.innerHTML = '';
+
+            tareas.forEach(tarea => {
+                const li = document.createElement('li');
+                li.classList.add('task-item');
+                if (tarea.completada) li.classList.add('completed');
+
+                li.innerHTML = `
+                    <input type="checkbox" 
+                           ${tarea.completada ? 'checked' : ''} 
+                           onchange="toggleCompletada(${tarea.id})">
+                    <span class="task-text">${tarea.texto}</span>
+                    <div class="task-buttons">
+                        <button class="edit-btn" onclick="editarTarea(${tarea.id})">✏️</button>
+                        <button class="delete-btn" onclick="eliminarTarea(${tarea.id})">🗑️</button>
+                    </div>
+                `;
+
+                lista.appendChild(li);
+            });
+
+            // Actualizar contadores
+            totalTareas.textContent = tareas.length;
+            tareasCompletadas.textContent = tareas.filter(t => t.completada).length;
+            tareasPendientes.textContent = tareas.filter(t => !t.completada).length;
+        }
+
+        function toggleCompletada(id) {
+            const tarea = tareas.find(t => t.id === id);
+            tarea.completada = !tarea.completada;
+            renderizarTareas();
+        }
+
+        function editarTarea(id) {
+            const tarea = tareas.find(t => t.id === id);
+            const nuevoTexto = prompt('Editar tarea:', tarea.texto);
+            
+            if (nuevoTexto !== null && nuevoTexto.trim() !== '') {
+                tarea.texto = nuevoTexto;
+                renderizarTareas();
+            }
+        }
+
+        function eliminarTarea(id) {
+            tareas = tareas.filter(t => t.id !== id);
+            renderizarTareas();
+        }
+    </script>
 </body>
 </html>
